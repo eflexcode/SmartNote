@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 import java.util.List;

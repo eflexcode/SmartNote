@@ -6,4 +6,6 @@ public interface RegistrationService {
 
     String registerUser(UserWrapper userWrapper);
 
+    String createToken(String email);
+
 }
