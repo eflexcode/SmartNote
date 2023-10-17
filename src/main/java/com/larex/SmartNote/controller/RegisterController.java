@@ -20,4 +20,11 @@ public class RegisterController {
         return new ResponseEntity<String>(registrationService.registerUser(userWrapper), HttpStatus.CREATED);
     }
 
+    @PostMapping("verifyToken")
+    public ResponseEntity<String> verifyToken(@RequestParam(name = "token") String token){
+
+        return new ResponseEntity<String>(registrationService.verifyToken(token),HttpStatus.ACCEPTED);
+
+    }
+
 }
