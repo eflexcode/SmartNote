@@ -85,6 +85,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (verificationToken.getExpirationDate().before(new Date()) ) {
             // expired
 
+            verificationRepository.delete(verificationToken);
+
             return "Token Expired";
         } else {
             //Not expired
@@ -100,5 +102,29 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return "Token Verified";
+    }
+
+    @Override
+    public String expiredToken(String token) {
+
+        VerificationToken verificationToken = verificationRepository.findByToken(token);
+        if (verificationToken == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with token: " + token);
+        }
+        String newToken = UUID.randomUUID().toString();
+        verificationToken.setToken(newToken);
+        verificationToken.setExpirationDate(new Date(System.currentTimeMillis()+Util.exp_time));
+
+        verificationRepository.save(verificationToken);
+        // verification token should be sent to email here but am not doing that
+        System.out.println("88888888888888888888888888888888888888888888888888888888888888888888");
+        System.out.println(token);
+
+        User user = userRepository.findByEmail(verificationToken.getUser().getEmail());
+        if (user == null) {
+            return "No User Found With Token: " + newToken;
+        }
+
+        return "A new verification token has being sent to email: "+user.getEmail();
     }
 }

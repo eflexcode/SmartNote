@@ -23,8 +23,13 @@ public class RegisterController {
     @PostMapping("verifyToken")
     public ResponseEntity<String> verifyToken(@RequestParam(name = "token") String token){
 
-        return new ResponseEntity<String>(registrationService.verifyToken(token),HttpStatus.ACCEPTED);
+        return new ResponseEntity<String>(registrationService.verifyToken(token),HttpStatus.OK);
 
+    }
+
+    @PostMapping("expiredToken")
+    public ResponseEntity<String> expiredToken(@RequestParam(name = "old_token") String token){
+        return new ResponseEntity<String>(registrationService.expiredToken(token),HttpStatus.OK);
     }
 
 }
