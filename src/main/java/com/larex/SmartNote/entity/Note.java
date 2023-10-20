@@ -1,5 +1,6 @@
 package com.larex.SmartNote.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,6 +20,7 @@ public class Note {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "created_at",updatable = false)
@@ -29,7 +31,6 @@ public class Note {
     @UpdateTimestamp
     private Date updatedAt;
 
-
-    private boolean publicRead = false;
-    private boolean publicWrite = false;
+    private Boolean publicRead = false;
+    private Boolean publicWrite = false;
 }
