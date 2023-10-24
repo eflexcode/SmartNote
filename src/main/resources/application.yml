@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
          dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+jwt:
+  secret: How I Failed My Netflix Interview | Prime Reacts

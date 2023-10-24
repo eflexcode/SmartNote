@@ -6,7 +6,7 @@ import com.larex.SmartNote.entity.wrapper.UserWrapper;
 import com.larex.SmartNote.event.AuthEvent;
 import com.larex.SmartNote.repository.UserRepository;
 import com.larex.SmartNote.repository.VerificationRepository;
-import com.larex.SmartNote.service.RegistrationService;
+import com.larex.SmartNote.service.AuthService;
 import com.larex.SmartNote.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +25,7 @@ import static java.rmi.server.LogStream.log;
 
 @Service
 @Slf4j
-public class RegistrationServiceImpl implements RegistrationService {
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private UserRepository userRepository;
@@ -59,7 +59,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void createToken(String email) {
 
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not User found"));;
         String token = UUID.randomUUID().toString();
 
         VerificationToken verificationToken = new VerificationToken();
@@ -95,7 +95,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         } else {
             //Not expired
             log("lllllllllllllllllllllllllll"+ (verificationToken.getExpirationDate().getTime() - calendar.getTime().getTime()));
-            User user = userRepository.findByEmail(verificationToken.getUser().getEmail());
+            User user = userRepository.findByEmail(verificationToken.getUser().getEmail()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not User found"));
             if (user == null) {
                 return "No User Found With Token: " + token;
             }
@@ -124,7 +124,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         System.out.println("88888888888888888888888888888888888888888888888888888888888888888888");
         System.out.println(token);
 
-        User user = userRepository.findByEmail(verificationToken.getUser().getEmail());
+        User user = userRepository.findByEmail(verificationToken.getUser().getEmail()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not User found"));
         if (user == null) {
             return "No User Found With Token: " + newToken;
         }

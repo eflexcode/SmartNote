@@ -6,8 +6,14 @@ import com.larex.SmartNote.repository.UserRepository;
 import com.larex.SmartNote.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Collection;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,4 +44,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.deleteById(id);
     }
+
+    @Override
+    public UserDetailsService userDetailService() {
+
+        return new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                return userRepository.findByEmail(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not User found"));
+            }
+        };
+    }
+
 }
