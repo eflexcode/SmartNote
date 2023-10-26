@@ -7,9 +7,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService  {
 
-    User getUser(Long id);
-    User updateUser(Long id, UserWrapper userWrapper);
+    User getUser();
+    User updateUser(UserWrapper userWrapper);
 
-    void deleteUser(Long id);
+    void deleteUser();
     UserDetailsService userDetailService();
+
+    User getLoggedInUser();
+
 }

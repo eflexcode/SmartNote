@@ -6,7 +6,9 @@ import com.larex.SmartNote.repository.UserRepository;
 import com.larex.SmartNote.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,14 +24,14 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not user found with id: " + id));
+    public User getUser() {
+        return getLoggedInUser();
     }
 
     @Override
-    public User updateUser(Long id, UserWrapper userWrapper) {
+    public User updateUser(UserWrapper userWrapper) {
 
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not user found with id: " + id));
+        User user = getLoggedInUser();
 
         user.setLastName((userWrapper.getLastName() != null) ? userWrapper.getLastName() : user.getLastName());
         user.setFirstName((userWrapper.getFirstName() != null) ? userWrapper.getFirstName() : user.getFirstName());
@@ -39,10 +41,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not user found with id: " + id));
+    public void deleteUser() {
+        User user = getLoggedInUser();
 
-        userRepository.deleteById(id);
+        userRepository.delete(user);
     }
 
     @Override
@@ -51,9 +53,19 @@ public class UserServiceImpl implements UserService {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return userRepository.findByEmail(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Not User found"));
+                System.out.println("lllllllllllllllllllllllllllllllllllllllllllllllllllllll "+username);
+                return userRepository.findByEmail(username).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"No User found"));
             }
         };
+    }
+
+    @Override
+    public User getLoggedInUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        return userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("No User Found with id: "+email));
     }
 
 }

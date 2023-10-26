@@ -6,6 +6,7 @@ import com.larex.SmartNote.entity.wrapper.NoteWrapper;
 import com.larex.SmartNote.repository.NoteRepository;
 import com.larex.SmartNote.repository.UserRepository;
 import com.larex.SmartNote.service.NoteService;
+import com.larex.SmartNote.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,11 +24,13 @@ public class NoteServiceImpl implements NoteService {
     private UserRepository userRepository;
     @Autowired
     private NoteRepository noteRepository;
+    @Autowired
+    private UserService userService;
 
     @Override
-    public Note createNote(Long userId, NoteWrapper noteWrapper) {
+    public Note createNote(NoteWrapper noteWrapper) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not user found with id: " + userId));
+        User user = userService.getLoggedInUser();
 
         Note note = new Note();
         BeanUtils.copyProperties(noteWrapper, note);
@@ -37,11 +40,11 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public String deleteNote(Long userId, Long noteId) {
+    public String deleteNote(Long noteId) {
 
         String returnStatement;
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with id: " + userId));
+        User user = userService.getLoggedInUser();
 
         Optional<Note> noteOptional = noteRepository.findById(noteId);
 
@@ -55,19 +58,19 @@ public class NoteServiceImpl implements NoteService {
                 noteRepository.deleteById(noteId);
                 System.out.println("ggggggggggggggggggggggggggggggggggggggggggggg " + user.getId() + " " + noteOptional.get().getUser().getId());
             } else {
-                return "Note with id: " + noteId + " does not belong to user with id: " + userId;
+                return "Note with id: " + noteId + " does not belong to user with id: " + user.getId();
             }
 
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No note found with id: "+noteId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No note found with id: " + noteId);
         }
         return "Deleted";
     }
 
     @Override
-    public Note updateNote(Long userId, Long noteId,NoteWrapper noteWrapper) {
+    public Note updateNote( Long noteId, NoteWrapper noteWrapper) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with id: " + userId));
+        User user = userService.getLoggedInUser();
 
         Optional<Note> noteOptional = noteRepository.findById(noteId);
 
@@ -81,14 +84,13 @@ public class NoteServiceImpl implements NoteService {
                 noteOptional.get().setPublicWrite((noteWrapper.getPublicWrite() != null) ? noteWrapper.getPublicWrite() : noteOptional.get().getPublicWrite());
 
 
-
             } else {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Note with id: "+noteId+ " does not belong to user with id: " + userId);
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Note with id: " + noteId + " does not belong to user with id: " + user.getId());
             }
 
-        }else {
+        } else {
 
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No note found with id: "+noteId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No note found with id: " + noteId);
 
         }
 
@@ -96,9 +98,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note findById(Long userId, Long noteId) {
+    public Note findById( Long noteId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with id: " + userId));
+        User user = userService.getLoggedInUser();
 
         Optional<Note> noteOptional = noteRepository.findById(noteId);
 
@@ -110,24 +112,24 @@ public class NoteServiceImpl implements NoteService {
                 note = noteOptional.get();
             } else {
 //                return "Note with id: " + noteId + " does not belong to user with id: " + userId;
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Note with id: "+noteId+ " does not belong to user with id: " + userId);
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Note with id: " + noteId + " does not belong to user with id: " + user.getId());
 
             }
 
-        }else {
+        } else {
 
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No note found with id: "+noteId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No note found with id: " + noteId);
 
         }
         return note;
     }
 
     @Override
-    public Page<Note> getAllNote(Long userId, Pageable pageable) {
+    public Page<Note> getAllNote(Pageable pageable) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with id: " + userId));
+        User user = userService.getLoggedInUser();
 
-        return noteRepository.findByUserId(userId,pageable);
+        return noteRepository.findByUserEmail(user.getEmail(), pageable);
     }
 
 }

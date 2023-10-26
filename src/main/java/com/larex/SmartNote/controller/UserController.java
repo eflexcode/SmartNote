@@ -15,20 +15,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        return new ResponseEntity<User>(userService.getUser(id), HttpStatus.OK);
+    @GetMapping()
+    public ResponseEntity<User> getUser() {
+        return new ResponseEntity<User>(userService.getUser(), HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserWrapper user) {
-        return new ResponseEntity<User>(userService.updateUser(id, user), HttpStatus.OK);
+    @PutMapping()
+    public ResponseEntity<User> update(@RequestBody UserWrapper user) {
+        return new ResponseEntity<User>(userService.updateUser(user), HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    @DeleteMapping()
+    public ResponseEntity<String> delete() {
 
-        userService.deleteUser(id);
+        userService.deleteUser();
 
         return new ResponseEntity<String>("Deleted", HttpStatus.OK);
     }

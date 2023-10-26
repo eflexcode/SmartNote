@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    private String secret = "How I Failed My Netflix Interview | Prime Reacts";
+    private String secret = "How I Failed My Netflix Interview | Prime ReactsHow I Failed My Netflix Interview | Prime ReactsHow I Failed My Netflix Interview | Prime ReactsHow I Failed My Netflix Interview | Prime ReactsHow I Failed My Netflix Interview | Prime Reacts";
 
     public String generateToken(UserDetails userDetails) {
 
@@ -34,7 +34,7 @@ public class JwtUtils {
 
     public String extractEmail(String jwt) {
 
-        return "";
+        return getClaimsFromToken(jwt,Claims::getSubject);
     }
 
     private Key signInKey(String secret) {
@@ -43,7 +43,7 @@ public class JwtUtils {
     }
 
     private <T> T getClaimsFromToken(String token, Function<Claims, T> claimsTFunction) {
-        final Claims claims = Jwts.parserBuilder().setSigningKey(signInKey(secret)).build().parseClaimsJwt(token).getBody();
+        final Claims claims = Jwts.parserBuilder().setSigningKey(signInKey(secret)).build().parseClaimsJws(token).getBody();
         return claimsTFunction.apply(claims);
     }
 

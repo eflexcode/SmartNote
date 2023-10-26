@@ -26,8 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
 
-    String[] openUrls = {"/auth/register","/auth/verifyToken","/auth/expiredToken"};
+    String[] openUrls = {"/auth/register","/auth/verifyToken","/auth/expiredToken","/auth/login"};
 
+    @Autowired
     private JwtAuthFilter jwtAuthFilter;
     @Autowired
     private UserService userService;

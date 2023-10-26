@@ -35,7 +35,7 @@ public class User implements UserDetails {
     private String imageUrl;
     private boolean enable = false;
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Note> notes;

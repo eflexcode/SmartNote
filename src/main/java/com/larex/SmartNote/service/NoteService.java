@@ -7,14 +7,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface NoteService {
 
-    Note createNote(Long userId, NoteWrapper noteWrapper);
+    Note createNote(NoteWrapper noteWrapper);
 
-    String deleteNote(Long userId,Long noteId);
+    String deleteNote(Long noteId);
 
-    Note updateNote(Long userId,Long noteId,NoteWrapper noteWrapper);
+    Note updateNote(Long noteId,NoteWrapper noteWrapper);
 
-    Note findById(Long userId,Long noteId);
+    Note findById(Long noteId);
 
-    Page<Note> getAllNote(Long userId,Pageable pageable);
+    Page<Note> getAllNote(Pageable pageable);
 
 }

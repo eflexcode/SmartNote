@@ -19,37 +19,37 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
-    @PostMapping("{id}")
-    public ResponseEntity<Note> createNote(@PathVariable Long id, @RequestBody NoteWrapper noteWrapper){
+    @PostMapping()
+    public ResponseEntity<Note> createNote( @RequestBody NoteWrapper noteWrapper){
 
-      return new ResponseEntity<Note>(noteService.createNote(id, noteWrapper), HttpStatus.CREATED);
-
-    }
-
-    @DeleteMapping("{userId}/{noteId}")
-    public ResponseEntity<String> deleteNote(@PathVariable Long userId,@PathVariable Long noteId){
-
-      return new ResponseEntity<String>(noteService.deleteNote(userId, noteId), HttpStatus.OK);
+      return new ResponseEntity<Note>(noteService.createNote(noteWrapper), HttpStatus.CREATED);
 
     }
 
-    @GetMapping("{userId}/{noteId}")
-    public ResponseEntity<Note> findNoteById(@PathVariable Long userId,@PathVariable Long noteId) {
+    @DeleteMapping("{noteId}")
+    public ResponseEntity<String> deleteNote(@PathVariable Long noteId){
 
-        return new ResponseEntity<>(noteService.findById(userId, noteId),HttpStatus.OK);
-
-    }
-    @GetMapping("{userId}")
-    public ResponseEntity<List<Note>> findNoteById(@PathVariable Long userId, Pageable pageable) {
-
-        return new ResponseEntity<>(noteService.getAllNote(userId, pageable).toList(),HttpStatus.OK);
+      return new ResponseEntity<String>(noteService.deleteNote(noteId), HttpStatus.OK);
 
     }
 
-    @PutMapping("{userId}/{noteId}")
-    public ResponseEntity<Note> updateNote(@PathVariable Long userId, @PathVariable Long noteId,@RequestBody NoteWrapper noteWrapper){
+    @GetMapping("{noteId}")
+    public ResponseEntity<Note> findNoteById(@PathVariable Long noteId) {
 
-        return new ResponseEntity<Note>(noteService.updateNote(userId, noteId, noteWrapper),HttpStatus.OK);
+        return new ResponseEntity<>(noteService.findById(noteId),HttpStatus.OK);
+
+    }
+    @GetMapping("")
+    public ResponseEntity<List<Note>> findNoteById(Pageable pageable) {
+
+        return new ResponseEntity<>(noteService.getAllNote( pageable).toList(),HttpStatus.OK);
+
+    }
+
+    @PutMapping("{noteId}")
+    public ResponseEntity<Note> updateNote(@PathVariable Long noteId,@RequestBody NoteWrapper noteWrapper){
+
+        return new ResponseEntity<Note>(noteService.updateNote(noteId, noteWrapper),HttpStatus.OK);
 
     }
 
