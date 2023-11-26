@@ -61,7 +61,8 @@ public class AuthController {
     public ResponseEntity<JwtResponse> login(@RequestBody Login login) throws DisabledException, BadCredentialsException {
 
         Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(),login.getPassword()));
+                authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(),login.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final UserDetails userDetails = userService.userDetailService().loadUserByUsername(login.getEmail());
